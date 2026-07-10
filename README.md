@@ -1,13 +1,24 @@
-# AI Chatbot Demo (React + Node.js + Gemini API)
+# Ember — AI Chatbot (React + Node.js + Gemini API)
 
-A simple, workable demo of an AI chatbot:
-- Hero section with a big chat box
-- Click it to open a chat window
-- Type or speak your message (voice input via browser Web Speech API)
-- Replies come from Google's Gemini API through a Node/Express backend
-- Replies can optionally be read aloud (browser text-to-speech)
+A themeable, voice-enabled AI chatbot assistant.
 
-This is a teaching/demo project — not production hardened.
+**🔗 Live app:** https://ai-chatbot-gamma-lime-36.vercel.app
+**🔗 Backend API:** https://ai-chatbot-myo5.onrender.com
+**🔗 Repository:** https://github.com/MohitGoel109/AI-Chatbot
+
+> Note: the backend is on Render's free tier, which spins down when idle.
+> The first message after a period of inactivity can take 30-50 seconds
+> to respond while it wakes back up — that's expected, not a bug.
+
+## Features
+
+- 6 original visual/voice themes (Ember, Voidwire, Arena, Cryo, Toxin, Royal Ash) — switch live via the theme button, each with its own colors, fonts, animated background, and voice pitch/rate
+- Voice input (speak your message) and voice output (replies read aloud), with a hands-free mode that auto-listens after the assistant finishes speaking
+- Reply language selector: English, Hindi, Hinglish, Bhojpuri, Bengali, Haryanvi (formal tone, respectful pronouns)
+- Streamed replies (text appears as it's generated, not after a long wait)
+- Markdown rendering, "explain simpler" button, chat history saved across refreshes
+- Casual, warm assistant persona (not a corporate script) — see `PERSONA_INSTRUCTION` in `server/src/services/gemini.service.js`
+- Rate limiting on the chat endpoints to protect API quota/billing
 
 ## Folder structure
 
@@ -17,61 +28,59 @@ ai-chatbot-demo/
 └── server/     Node/Express backend
 ```
 
-## 1. Get a Gemini API key
+## Run it locally
 
-Go to https://aistudio.google.com/apikey and create a free API key.
+### 1. Get a Gemini API key
+https://aistudio.google.com/apikey — free to create.
 
-## 2. Set up the server
-
+### 2. Set up the server
 ```bash
 cd server
 npm install
 cp .env.example .env
 ```
-
-Open `.env` and paste your key:
-
+Open `.env` and fill in:
 ```
 GEMINI_API_KEY=your_real_key_here
-PORT=5000
+PORT=8088
 ```
+Leave `CLIENT_ORIGIN`, `RATE_LIMIT_MAX`, `RATE_LIMIT_WINDOW_MS` as-is for local dev.
 
-Start the server:
-
+Start it:
 ```bash
 npm run dev
 ```
+You should see `Server running on http://localhost:8088`.
 
-You should see: `Server running on http://localhost:8088`
-
-## 3. Set up the client
-
-Open a new terminal:
-
+### 3. Set up the client
+New terminal:
 ```bash
 cd client
 npm install
 npm run dev
 ```
+Open the URL Vite prints (usually http://localhost:5173). No env setup needed locally — it falls back to `localhost:8088` automatically.
 
-Open the URL Vite prints (usually http://localhost:5173).
+If `npm install` fails on a rollup native-binding error (known npm bug), run:
+```bash
+npm install @rollup/rollup-linux-x64-gnu --no-save
+```
+(swap for `@rollup/rollup-darwin-x64` on Mac, `@rollup/rollup-win32-x64-msvc` on Windows)
 
-## 4. Try it out
+## Deployment
 
-1. You'll see a hero section with a big "Talk to the AI Assistant" box.
-2. Click it — a chat window opens in the bottom-right corner.
-3. Type a message and press Enter / click Send, OR click the 🎤 mic button and speak.
-4. The assistant's reply appears in the chat, and (if "Read replies aloud" is checked) is spoken back to you.
+- **Backend** deployed on [Render](https://render.com) — root directory `server`, build `npm install`, start `npm start`. Env vars: `GEMINI_API_KEY`, `CLIENT_ORIGIN` (your Vercel URL), `RATE_LIMIT_MAX`, `RATE_LIMIT_WINDOW_MS`.
+- **Frontend** deployed on [Vercel](https://vercel.com) — root directory `client`. Env var: `VITE_API_BASE_URL` = your Render URL + `/api`.
 
-## Notes for demoing to students
+## Notes
 
-- Voice input (🎤) uses the browser's built-in SpeechRecognition. It works best in **Chrome or Edge**. Firefox/Safari support is limited.
-- The Gemini API key lives only on the server (`server/.env`) — it is never exposed to the browser. This is intentional and worth pointing out as a security best practice.
-- Conversation history is kept in React state and sent with every request, so Gemini has context of the conversation (see `buildHistory` in `ChatWindow.jsx` and `startChat` in `gemini.service.js`).
-- Model used: `gemini-2.5-flash` (fast + cheap, good for demos). You can change this in `server/src/services/gemini.service.js`.
+- Voice input/output uses the browser's built-in Web Speech API — works best in **Chrome or Edge**.
+- Browsers don't ship dedicated Bhojpuri or Haryanvi voices, so those two languages fall back to a Hindi (hi-IN) accent for speech — the text itself is correct, only the spoken accent is an approximation.
+- The Gemini API key lives only on the server, never exposed to the browser.
+- Model used: `gemini-2.5-flash` (configurable in `server/src/services/gemini.service.js`).
 
 ## Common issues
 
-- **"GEMINI_API_KEY is not set" warning**: you forgot to create `server/.env` from `.env.example`.
-- **Chat says "couldn't reach the server"**: make sure the server is running on port 5000 before using the client.
-- **Mic button does nothing**: your browser doesn't support SpeechRecognition, or you denied microphone permission — check the address bar for a blocked mic icon.
+- **"couldn't reach the server"**: backend isn't running, or (in production) `VITE_API_BASE_URL` / `CLIENT_ORIGIN` don't match your actual deployed URLs exactly (check for trailing slashes, http vs https).
+- **Mic button does nothing**: browser doesn't support SpeechRecognition, or mic permission was denied.
+- **"You're sending messages too quickly"**: rate limit hit (default 30 requests/15 min per IP) — wait or adjust `RATE_LIMIT_MAX`.

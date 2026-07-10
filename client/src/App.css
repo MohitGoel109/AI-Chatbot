@@ -1,0 +1,1232 @@
+/* =======================================================================
+   EMBER — Ghost-Rider-inspired theme
+   Tokens:
+   --void       #0a0705  page background
+   --char       #17110d  panel background
+   --char-2     #201812  raised panel background
+   --ember      #ff6a1a  primary flame orange
+   --hellfire   #ffb238  flame highlight / accent
+   --steel      #3d4650  cool chain-metal grey-blue
+   --steel-lt   #5c6773  lighter steel for borders
+   --bone       #ece4d4  primary text
+   --bone-dim   #a89f92  secondary text
+   Type: display = Cinzel, body = Inter, utility = JetBrains Mono
+   ======================================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --void: #0a0705;
+  --char: #17110d;
+  --char-2: #221912;
+  --ember: #ff6a1a;
+  --hellfire: #ffb238;
+  --steel: #3d4650;
+  --steel-lt: #5c6773;
+  --bone: #ece4d4;
+  --bone-dim: #a89f92;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  background: var(--void);
+  color: var(--bone);
+}
+
+.app {
+  min-height: 100vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- Ember background field ---------- */
+.ember-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ember {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--hellfire) 0%, var(--ember) 55%, transparent 75%);
+  box-shadow: 0 0 8px 1px rgba(255, 106, 26, 0.7);
+  opacity: 0;
+  animation-name: rise;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(var(--drift), -100vh);
+    opacity: 0;
+  }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  background: radial-gradient(ellipse at 50% 30%, #241610 0%, var(--void) 70%);
+  overflow: hidden;
+}
+
+.hero-badge {
+  position: relative;
+  z-index: 1;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: var(--hellfire);
+  border: 1px solid rgba(255, 178, 56, 0.35);
+  border-radius: 999px;
+  padding: 6px 16px;
+  margin-bottom: 22px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  position: relative;
+  z-index: 1;
+  font-family: "Cinzel", serif;
+  font-weight: 900;
+  font-size: 3.2rem;
+  margin: 0 0 14px;
+  letter-spacing: 0.02em;
+  color: var(--bone);
+}
+
+.flame-text {
+  background: linear-gradient(180deg, var(--hellfire) 0%, var(--ember) 60%, #b8350a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 30px rgba(255, 106, 26, 0.35);
+}
+
+.hero-subtitle {
+  position: relative;
+  z-index: 1;
+  color: var(--bone-dim);
+  margin-bottom: 44px;
+  max-width: 480px;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.hero-chat-box {
+  position: relative;
+  z-index: 1;
+  width: 320px;
+  padding: 40px 30px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, var(--char-2), var(--char));
+  border: 1px solid rgba(255, 106, 26, 0.25);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 178, 56, 0.05) inset;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-chat-box:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 50px rgba(255, 106, 26, 0.25), 0 0 40px rgba(255, 106, 26, 0.15);
+  border-color: rgba(255, 178, 56, 0.6);
+}
+
+.hero-chat-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.hero-chat-box h2 {
+  font-family: "Cinzel", serif;
+  margin: 8px 0 6px;
+  font-size: 1.25rem;
+  color: var(--bone);
+}
+
+.hero-chat-box p {
+  color: var(--bone-dim);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.hero-chain-rule {
+  position: relative;
+  z-index: 1;
+  margin-top: 50px;
+  width: 220px;
+  height: 6px;
+  opacity: 0.5;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--steel-lt) 0 10px,
+    transparent 10px 14px
+  );
+  border-radius: 3px;
+}
+
+/* ---------- Chat Window ---------- */
+.chat-window {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 380px;
+  height: 560px;
+  background: linear-gradient(180deg, var(--char-2), var(--char) 60%);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 106, 26, 0.3);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(255, 106, 26, 0.12);
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.ignite-in {
+  animation: ignite 0.4s ease-out;
+}
+
+@keyframes ignite {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+    box-shadow: 0 0 0 rgba(255, 106, 26, 0);
+  }
+  60% {
+    box-shadow: 0 0 60px rgba(255, 106, 26, 0.4);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chat-header {
+  background: linear-gradient(90deg, #1c130d, #2a1a10);
+  border-bottom: 2px solid;
+  border-image: repeating-linear-gradient(90deg, var(--steel-lt) 0 8px, transparent 8px 12px) 2;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.chat-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Cinzel", serif;
+  color: var(--hellfire);
+  letter-spacing: 0.04em;
+}
+
+.chat-header-title .bubble-avatar {
+  width: 22px;
+  height: 22px;
+  color: var(--ember);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--steel-lt);
+  margin-left: 2px;
+}
+
+.status-dot.listening {
+  background: #ff3b3b;
+  box-shadow: 0 0 6px 2px rgba(255, 59, 59, 0.7);
+  animation: pulse 1s infinite;
+}
+
+.status-dot.speaking {
+  background: var(--hellfire);
+  box-shadow: 0 0 6px 2px rgba(255, 178, 56, 0.7);
+  animation: pulse 1.2s infinite;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--bone-dim);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.close-btn:hover {
+  color: var(--ember);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+  background: var(--steel);
+  border-radius: 4px;
+}
+
+.chat-bubble-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.chat-bubble-row.user {
+  justify-content: flex-end;
+}
+
+.bubble-avatar {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  color: var(--steel-lt);
+  transition: color 0.3s ease, filter 0.3s ease;
+}
+
+.bubble-avatar.active {
+  color: var(--ember);
+  filter: drop-shadow(0 0 6px rgba(255, 106, 26, 0.8));
+}
+
+.chat-bubble {
+  max-width: 76%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.chat-bubble.user {
+  background: linear-gradient(135deg, var(--ember), #c9450f);
+  color: #1a0e05;
+  font-weight: 500;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 14px rgba(255, 106, 26, 0.3);
+}
+
+.chat-bubble.model {
+  background: var(--char-2);
+  border: 1px solid rgba(92, 103, 115, 0.4);
+  color: var(--bone);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 14px;
+}
+
+.ember-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ember);
+  box-shadow: 0 0 5px rgba(255, 106, 26, 0.8);
+  animation: bob 1s infinite ease-in-out;
+}
+.ember-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.ember-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.simplify-btn {
+  display: block;
+  margin-top: 8px;
+  background: none;
+  border: 1px solid rgba(255, 178, 56, 0.35);
+  color: var(--hellfire);
+  border-radius: 8px;
+  font-size: 0.72rem;
+  padding: 4px 9px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.simplify-btn:hover {
+  background: rgba(255, 106, 26, 0.12);
+  border-color: var(--hellfire);
+}
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid rgba(92, 103, 115, 0.3);
+}
+
+.chat-input-row input[type="text"] {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(92, 103, 115, 0.4);
+  background: var(--void);
+  color: var(--bone);
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.chat-input-row input[type="text"]:focus {
+  outline: 2px solid var(--ember);
+  outline-offset: 1px;
+}
+
+.mic-btn,
+.send-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mic-btn {
+  background: var(--steel);
+  color: var(--bone);
+}
+
+.mic-btn.listening {
+  background: #7a1c1c;
+  animation: pulse 1s infinite;
+}
+
+.mic-btn.speaking {
+  background: linear-gradient(135deg, var(--ember), var(--hellfire));
+  box-shadow: 0 0 12px rgba(255, 106, 26, 0.6);
+}
+
+.send-btn {
+  background: linear-gradient(135deg, var(--ember), #c9450f);
+  color: #1a0e05;
+  font-weight: 700;
+}
+
+.send-btn:hover:not(:disabled) {
+  box-shadow: 0 0 14px rgba(255, 106, 26, 0.5);
+}
+
+.mic-btn:disabled,
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 14px 12px;
+}
+
+.voice-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--bone-dim);
+}
+
+.voice-toggle input {
+  accent-color: var(--ember);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 460px) {
+  .chat-window {
+    right: 10px;
+    left: 10px;
+    bottom: 10px;
+    width: auto;
+    height: 70vh;
+  }
+  .hero h1 {
+    font-size: 2.3rem;
+  }
+  .hero-chat-box {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+/* =======================================================================
+   THEME OVERRIDES
+   Each theme just swaps the core color tokens; layout/structure CSS above
+   stays the same for all six.
+   ======================================================================= */
+
+[data-theme="voidwire"] {
+  --void: #0a0505;
+  --char: #180a0a;
+  --char-2: #240e0e;
+  --ember: #e0122f;
+  --hellfire: #ff3b57;
+  --steel: #2b2b2b;
+  --steel-lt: #4a4a4a;
+  --bone: #f0e8e8;
+  --bone-dim: #a89494;
+}
+
+[data-theme="kombat"] {
+  --void: #0a0704;
+  --char: #1c130a;
+  --char-2: #2a1c0d;
+  --ember: #c8102e;
+  --hellfire: #e8b84b;
+  --steel: #4a3a1f;
+  --steel-lt: #a5822f;
+  --bone: #f2e8d8;
+  --bone-dim: #b3a488;
+}
+
+[data-theme="cryo"] {
+  --void: #060b10;
+  --char: #0e1922;
+  --char-2: #142330;
+  --ember: #3fb8e8;
+  --hellfire: #a8e6ff;
+  --steel: #26404f;
+  --steel-lt: #4d7f96;
+  --bone: #e6f4fa;
+  --bone-dim: #8fb2c2;
+}
+
+[data-theme="toxin"] {
+  --void: #050803;
+  --char: #0d150a;
+  --char-2: #14220e;
+  --ember: #7fff2a;
+  --hellfire: #c6ff5e;
+  --steel: #1f3318;
+  --steel-lt: #3f6b2e;
+  --bone: #e4f7d8;
+  --bone-dim: #93b283;
+}
+
+[data-theme="royal"] {
+  --void: #0a0712;
+  --char: #180f26;
+  --char-2: #23163a;
+  --ember: #9b59f5;
+  --hellfire: #e8c15c;
+  --steel: #3a2d52;
+  --steel-lt: #5f4a80;
+  --bone: #f0e9fa;
+  --bone-dim: #b3a4c9;
+}
+
+/* =======================================================================
+   THEME PERSONALITY — fonts, particle motion, background texture and
+   shape language differ per theme so they read as genuinely distinct
+   skins, not just recolors.
+   ======================================================================= */
+
+/* ---- Fonts ---- */
+[data-theme="ember"] .hero h1,
+[data-theme="ember"] .hero-chat-box h2,
+[data-theme="ember"] .chat-header-title {
+  font-family: "Cinzel", serif;
+}
+
+[data-theme="voidwire"] .hero h1,
+[data-theme="voidwire"] .hero-chat-box h2,
+[data-theme="voidwire"] .chat-header-title {
+  font-family: "Bebas Neue", "Cinzel", sans-serif;
+  letter-spacing: 0.06em;
+}
+
+[data-theme="kombat"] .hero h1,
+[data-theme="kombat"] .hero-chat-box h2,
+[data-theme="kombat"] .chat-header-title {
+  font-family: "Cinzel Decorative", "Cinzel", serif;
+}
+
+[data-theme="cryo"] .hero h1,
+[data-theme="cryo"] .hero-chat-box h2,
+[data-theme="cryo"] .chat-header-title {
+  font-family: "Quicksand", "Inter", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="toxin"] .hero h1,
+[data-theme="toxin"] .hero-chat-box h2,
+[data-theme="toxin"] .chat-header-title,
+[data-theme="toxin"] .chat-bubble {
+  font-family: "Share Tech Mono", "JetBrains Mono", monospace;
+}
+
+[data-theme="royal"] .hero h1,
+[data-theme="royal"] .hero-chat-box h2,
+[data-theme="royal"] .chat-header-title {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+}
+
+/* ---- Ember/particle motion: each theme's ambient field moves and
+   looks different (direction, shape, texture) not just color. ---- */
+
+/* Voidwire — sharp red sparks that flicker downward-glitch, not smooth rise */
+[data-theme="voidwire"] .ember {
+  border-radius: 1px;
+  transform-origin: center;
+  animation-name: rise, glitch-flicker;
+  animation-duration: inherit, 0.4s;
+  animation-iteration-count: infinite, infinite;
+}
+
+@keyframes glitch-flicker {
+  0%, 100% { opacity: 1; }
+  45% { opacity: 1; }
+  50% { opacity: 0.1; }
+  55% { opacity: 1; }
+  80% { opacity: 0.3; }
+}
+
+/* Arena — bigger, bolder gold sparks with a stronger glow burst */
+[data-theme="kombat"] .ember {
+  box-shadow: 0 0 16px 4px rgba(232, 184, 75, 0.85);
+}
+
+/* Cryo — falls like snow, soft round, gentle drift */
+[data-theme="cryo"] .ember {
+  bottom: auto;
+  top: -10px;
+  border-radius: 50%;
+  filter: blur(0.3px);
+  animation-name: drift-down;
+}
+
+/* Toxin — falls fast like matrix code, thin rectangles */
+[data-theme="toxin"] .ember {
+  bottom: auto;
+  top: -10px;
+  border-radius: 0;
+  width: 2px !important;
+  height: 14px !important;
+  animation-name: drift-down;
+}
+
+@keyframes drift-down {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(var(--drift), 100vh);
+    opacity: 0;
+  }
+}
+
+/* Royal — slow, faint, dust-like */
+[data-theme="royal"] .ember {
+  filter: blur(1px);
+  opacity: 0.55;
+}
+
+/* ---- Background texture overlays ---- */
+[data-theme="voidwire"] .hero::after,
+[data-theme="voidwire"] .chat-window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(224, 18, 47, 0.05) 0px,
+    rgba(224, 18, 47, 0.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 0;
+}
+
+[data-theme="kombat"] .hero {
+  background: radial-gradient(ellipse at 50% 20%, #2a1c0d 0%, var(--void) 75%);
+}
+[data-theme="kombat"] .hero-chat-box,
+[data-theme="kombat"] .chat-window {
+  border-width: 2px;
+  border-image: linear-gradient(135deg, var(--hellfire), var(--ember), var(--hellfire)) 1;
+}
+
+[data-theme="cryo"] .chat-window,
+[data-theme="cryo"] .hero-chat-box {
+  backdrop-filter: blur(6px);
+  background: linear-gradient(160deg, rgba(20, 35, 48, 0.85), rgba(14, 25, 34, 0.9));
+}
+
+[data-theme="toxin"] .hero::after,
+[data-theme="toxin"] .chat-window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(127, 255, 42, 0.04) 0px,
+    rgba(127, 255, 42, 0.04) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  z-index: 0;
+}
+
+[data-theme="royal"] .hero-chat-box,
+[data-theme="royal"] .chat-window {
+  border-style: double;
+  border-width: 3px;
+}
+
+/* ---- Shape language: bubbles/buttons feel structurally different ---- */
+[data-theme="voidwire"] .chat-bubble,
+[data-theme="voidwire"] .send-btn,
+[data-theme="voidwire"] .mic-btn {
+  border-radius: 3px;
+}
+
+[data-theme="kombat"] .chat-bubble.user {
+  clip-path: polygon(6% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+[data-theme="cryo"] .chat-bubble {
+  border-radius: 20px;
+}
+
+[data-theme="toxin"] .chat-bubble,
+[data-theme="toxin"] .send-btn,
+[data-theme="toxin"] .mic-btn,
+[data-theme="toxin"] .chat-input-row input[type="text"] {
+  border-radius: 2px;
+}
+
+[data-theme="royal"] .chat-bubble {
+  border-radius: 4px 16px 4px 16px;
+}
+
+/* =======================================================================
+   Theme switcher
+   ======================================================================= */
+.hero-theme-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
+
+.theme-switcher {
+  position: relative;
+}
+
+.theme-switcher-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--bone);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+}
+
+.theme-switcher-btn:hover {
+  border-color: var(--ember);
+}
+
+.theme-switcher-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--char-2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 190px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  color: var(--bone);
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.theme-option:hover,
+.theme-option.active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.theme-option-icon {
+  font-size: 1.1rem;
+}
+
+.theme-option-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.theme-option-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.theme-option-tagline {
+  font-size: 0.7rem;
+  color: var(--bone-dim);
+}
+
+/* =======================================================================
+   Chat sub-header (theme + language controls inside the chat window)
+   ======================================================================= */
+.chat-subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.language-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--void);
+  border: 1px solid var(--ember);
+  border-radius: 8px;
+  padding: 0 4px 0 8px;
+}
+
+.language-select-icon {
+  font-size: 0.85rem;
+}
+
+.language-select {
+  background: transparent;
+  color: var(--bone);
+  border: none;
+  padding: 5px 4px;
+  font-size: 0.78rem;
+  font-family: "Inter", sans-serif;
+  max-width: 150px;
+}
+
+.language-select:focus {
+  outline: none;
+}
+
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--bone-dim);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.icon-btn:hover {
+  color: var(--ember);
+}
+
+.typing-inline {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 0;
+}
+
+/* =======================================================================
+   Markdown content inside bubbles
+   ======================================================================= */
+.chat-bubble p {
+  margin: 0 0 8px;
+}
+.chat-bubble p:last-child {
+  margin-bottom: 0;
+}
+.chat-bubble ul,
+.chat-bubble ol {
+  margin: 4px 0 8px;
+  padding-left: 20px;
+}
+.chat-bubble li {
+  margin-bottom: 3px;
+}
+.inline-code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82em;
+}
+.code-block {
+  background: var(--void);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  overflow-x: auto;
+  margin: 6px 0;
+}
+.code-block code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+  color: var(--bone);
+}
+
+/* =======================================================================
+   AVATAR BADGE — theme-driven icon (skull / dagger / sword / snowflake /
+   biohazard / crown) used everywhere the assistant needs a face.
+   ======================================================================= */
+.avatar-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  filter: grayscale(0.15);
+  transition: filter 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.avatar-badge.avatar-sm {
+  width: 26px;
+  height: 26px;
+  font-size: 0.9rem;
+}
+.avatar-badge.avatar-md {
+  width: 34px;
+  height: 34px;
+  font-size: 1.2rem;
+}
+.avatar-badge.avatar-lg {
+  width: 60px;
+  height: 60px;
+  font-size: 2rem;
+}
+
+.avatar-badge.active {
+  filter: grayscale(0) drop-shadow(0 0 8px var(--ember));
+  box-shadow: 0 0 16px 2px rgba(255, 106, 26, 0.35);
+  border-color: var(--ember);
+  animation: avatar-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes avatar-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* =======================================================================
+   THEME BACKDROPS — signature animated atmosphere per theme.
+   ======================================================================= */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  color: var(--hellfire);
+}
+
+/* ---- Ember: pulsing heat glow ---- */
+.heat-glow {
+  position: absolute;
+  bottom: -20%;
+  left: 50%;
+  width: 700px;
+  height: 700px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(255, 106, 26, 0.25) 0%, transparent 65%);
+  animation: heat-pulse 5s ease-in-out infinite;
+}
+
+@keyframes heat-pulse {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.12); }
+}
+
+/* ---- Voidwire: CRT scan sweep + occasional glitch flash ---- */
+.scan-sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.5;
+  animation: scan-move 4.5s linear infinite;
+}
+.scan-sweep-void {
+  color: #ff3b57;
+  box-shadow: 0 0 12px 2px rgba(255, 59, 87, 0.6);
+}
+.scan-sweep-toxin {
+  color: #c6ff5e;
+  box-shadow: 0 0 12px 2px rgba(198, 255, 94, 0.6);
+}
+
+@keyframes scan-move {
+  0% { top: -5%; }
+  100% { top: 105%; }
+}
+
+.glitch-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(224, 18, 47, 0.08);
+  opacity: 0;
+  animation: glitch-flash-seq 6s steps(1) infinite;
+}
+
+@keyframes glitch-flash-seq {
+  0%, 91%, 100% { opacity: 0; transform: translateX(0); }
+  92% { opacity: 1; transform: translateX(-4px); }
+  93% { opacity: 0; transform: translateX(0); }
+  94% { opacity: 0.6; transform: translateX(3px); }
+  95% { opacity: 0; }
+}
+
+/* ---- Arena/Kombat: rotating rings + corner torches ---- */
+.ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 480px;
+  height: 480px;
+  transform: translate(-50%, -50%);
+  opacity: 0.28;
+}
+.ring-a {
+  animation: spin-cw 40s linear infinite;
+}
+.ring-b {
+  width: 380px;
+  height: 380px;
+  opacity: 0.22;
+  animation: spin-ccw 28s linear infinite;
+}
+
+@keyframes spin-cw {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes spin-ccw {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+
+.corner-flame {
+  position: absolute;
+  font-size: 1.6rem;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 8px rgba(232, 184, 75, 0.7));
+  animation: flame-flicker 1.6s ease-in-out infinite;
+}
+.corner-flame.tl { top: 4%; left: 4%; }
+.corner-flame.tr { top: 4%; right: 4%; animation-delay: 0.3s; }
+.corner-flame.bl { bottom: 4%; left: 4%; animation-delay: 0.6s; }
+.corner-flame.br { bottom: 4%; right: 4%; animation-delay: 0.9s; }
+
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.5; }
+  50% { transform: scale(1.15) rotate(2deg); opacity: 0.85; }
+}
+
+/* ---- Royal Ash: slow ring + silk light sweep ---- */
+.ring-royal {
+  width: 520px;
+  height: 520px;
+  opacity: 0.18;
+  animation: spin-cw 70s linear infinite;
+}
+
+.silk-sweep {
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(115deg, transparent 40%, rgba(232, 193, 92, 0.12) 50%, transparent 60%);
+  animation: silk-move 7s ease-in-out infinite;
+}
+
+@keyframes silk-move {
+  0%, 100% { transform: translateX(-15%); }
+  50% { transform: translateX(15%); }
+}
+
+/* ---- Cryo: aurora waves + drifting snowflake glyphs ---- */
+.aurora {
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(63, 184, 232, 0.25), transparent 55%);
+  filter: blur(20px);
+  animation: aurora-drift-1 9s ease-in-out infinite;
+}
+.aurora-2 {
+  background: radial-gradient(ellipse at 70% 60%, rgba(168, 230, 255, 0.18), transparent 55%);
+  animation: aurora-drift-2 12s ease-in-out infinite;
+}
+
+@keyframes aurora-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6%, 4%) scale(1.1); }
+}
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-5%, -6%) scale(1.08); }
+}
+
+.drift-glyph {
+  position: absolute;
+  font-size: 1.4rem;
+  opacity: 0.35;
+  animation: glyph-float 10s ease-in-out infinite;
+}
+.drift-glyph.g1 { top: 15%; left: 20%; animation-duration: 11s; }
+.drift-glyph.g2 { top: 55%; left: 75%; animation-duration: 8s; animation-delay: 1s; }
+.drift-glyph.g3 { top: 75%; left: 30%; animation-duration: 13s; animation-delay: 2s; }
+
+@keyframes glyph-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(15deg); }
+}
+
+/* ---- Toxin: matrix glyph rain ---- */
+.glyph-rain {
+  position: absolute;
+  inset: 0;
+}
+.glyph-col {
+  position: absolute;
+  top: -40%;
+  display: flex;
+  flex-direction: column;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.85rem;
+  color: currentColor;
+  text-shadow: 0 0 6px currentColor;
+  animation: glyph-fall linear infinite;
+}
+
+@keyframes glyph-fall {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(140vh); }
+}
+
+/* =======================================================================
+   Extra ambient life shared across themes
+   ======================================================================= */
+.flame-text {
+  background-size: 200% 200%;
+  animation: flame-shift 4s ease-in-out infinite;
+}
+@keyframes flame-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero-badge {
+  animation: badge-glow 2.4s ease-in-out infinite;
+}
+@keyframes badge-glow {
+  0%, 100% { box-shadow: 0 0 0 rgba(255, 178, 56, 0); }
+  50% { box-shadow: 0 0 14px rgba(255, 178, 56, 0.35); }
+}

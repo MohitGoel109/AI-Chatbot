@@ -3,7 +3,7 @@ import HeroSection from "./HeroSection.jsx";
 import ChatWindow from "./ChatWindow.jsx";
 import { playIgnition, playClose } from "../utils/sfx.js";
 
-function ChatWidget() {
+function ChatWidget({ session }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpen = () => {
@@ -19,7 +19,7 @@ function ChatWidget() {
   return (
     <>
       <HeroSection onOpenChat={handleOpen} />
-      {isOpen && <ChatWindow onClose={handleClose} />}
+      {isOpen && <ChatWindow onClose={handleClose} session={session} />}
     </>
   );
 }

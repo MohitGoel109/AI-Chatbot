@@ -12,6 +12,7 @@
 
 let voicesReadyPromise = null;
 const voiceCache = new Map(); // lang -> best voice
+const blacklistedVoiceNames = new Set(); // voices that failed synthesis this session
 
 function scoreVoice(voice, targetLang) {
   const name = voice.name.toLowerCase();
@@ -26,10 +27,15 @@ function scoreVoice(voice, targetLang) {
   }
 
   if (/natural|enhanced|premium|neural/.test(name)) score += 6;
-  if (/online/.test(name)) score += 3;
+  // "Online" voices route through a cloud service (e.g. Microsoft's Azure
+  // neural voices) and can silently fail with "synthesis-failed" if that
+  // network call is blocked (firewall, VPN, flaky connection). Prefer
+  // local/offline voices so speech doesn't depend on that round-trip.
+  if (/online/.test(name)) score -= 4;
   if (/google/.test(name)) score += 4;
   if (/microsoft/.test(name)) score += 3;
   if (/robot|whisper|bells|organ|zarvox|trinoids|bahh/.test(name)) score -= 10;
+  if (blacklistedVoiceNames.has(voice.name)) score -= 100;
 
   return score;
 }
@@ -49,7 +55,9 @@ function waitForVoices() {
 
 async function pickBestVoice(targetLang) {
   const key = targetLang || "default";
-  if (voiceCache.has(key)) return voiceCache.get(key);
+  if (voiceCache.has(key) && !blacklistedVoiceNames.has(voiceCache.get(key)?.name)) {
+    return voiceCache.get(key);
+  }
   const voices = await waitForVoices();
   if (!voices.length) return null;
   const best = [...voices].sort((a, b) => scoreVoice(b, targetLang) - scoreVoice(a, targetLang))[0];
@@ -78,19 +86,32 @@ export async function speakText(text, { lang, themeVoice = {}, onStart, onEnd } 
   }
 
   window.speechSynthesis.cancel();
-  const voice = await pickBestVoice(lang);
+  let voice = await pickBestVoice(lang);
   const sentences = splitIntoSentences(text);
   if (sentences.length === 0) {
     onEnd?.();
     return;
   }
 
+  console.log("speakText: starting,", sentences.length, "sentence(s), voice:", voice?.name || "default");
   onStart?.();
 
   const basePitch = 0.97 + (themeVoice.pitch || 0);
   const baseRate = 1.0 + (themeVoice.rate || 0);
 
-  sentences.forEach((sentence, i) => {
+  // Chrome/Edge have a known bug where queuing several utterances back-to-back
+  // (e.g. via forEach) can silently drop everything after the first one,
+  // especially right after cancel(). Speaking one at a time and only
+  // starting the next once the previous one's onend fires avoids that.
+  let index = 0;
+  let retriedCurrentSentence = false;
+
+  function speakNext() {
+    if (index >= sentences.length) {
+      onEnd?.();
+      return;
+    }
+    const sentence = sentences[index];
     const utterance = new SpeechSynthesisUtterance(sentence);
     if (voice) utterance.voice = voice;
     utterance.lang = lang || voice?.lang || "en-US";
@@ -106,15 +127,56 @@ export async function speakText(text, { lang, themeVoice = {}, onStart, onEnd } 
     utterance.rate = Math.min(Math.max(rate, 0.65), 1.4);
     utterance.volume = 1;
 
-    if (i === sentences.length - 1) {
-      utterance.onend = () => onEnd?.();
-      utterance.onerror = () => onEnd?.();
-    }
+    utterance.onend = () => {
+      index++;
+      retriedCurrentSentence = false;
+      speakNext();
+    };
+    utterance.onerror = async (event) => {
+      console.error("SpeechSynthesis error:", event.error, "on voice:", voice?.name);
+      // Voice is broken (e.g. an "online" voice that can't reach its
+      // cloud service). Blacklist it and try this sentence once more
+      // with a different voice before giving up and moving on.
+      if (voice) blacklistedVoiceNames.add(voice.name);
+      if (!retriedCurrentSentence) {
+        retriedCurrentSentence = true;
+        voice = await pickBestVoice(lang);
+        console.log("Retrying with fallback voice:", voice?.name || "default");
+        speakNext();
+      } else {
+        index++;
+        retriedCurrentSentence = false;
+        speakNext();
+      }
+    };
 
     window.speechSynthesis.speak(utterance);
-  });
+  }
+
+  speakNext();
 }
 
 export function stopSpeaking() {
   window.speechSynthesis?.cancel();
+}
+
+/**
+ * Some Chromium builds (notably certain Edge versions) silently block
+ * speechSynthesis.speak() if too much time has passed since the user's
+ * last real click/tap — which happens here because we call speak() only
+ * after the reply has finished streaming in, well after the original
+ * "Send" click. Calling this SYNCHRONOUSLY inside a click handler (before
+ * any await) "unlocks" the engine for the rest of the tab session, so the
+ * later automatic speak() call goes through fine. The unlock utterance
+ * itself is inaudible (empty text, zero volume).
+ */
+export function unlockSpeech() {
+  if (!window.speechSynthesis) return;
+  try {
+    const unlock = new SpeechSynthesisUtterance(" ");
+    unlock.volume = 0;
+    window.speechSynthesis.speak(unlock);
+  } catch {
+    // Non-fatal — worst case the original bug persists on this browser.
+  }
 }
